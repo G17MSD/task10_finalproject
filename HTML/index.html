@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GEOnews</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Tooltip CSS */
+    .article {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+
+    .article img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    /* Styling for headlines */
+    .headline-link {
+      color: blue;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .headline-link:hover {
+      color: darkblue;
+    }
+
+    /* Updated styles for article layout */
+    .headline-box {
+      display: inline-block;
+      width: calc(33.33% - 20px); /* Adjust the width for 3 articles side by side with margin */
+      margin: 0 10px 20px; /* Add margin to space out the articles */
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-sizing: border-box; /* Include padding and border in the width calculation */
+    }
+
+    .headline-box img {
+      width: 100%; /* Make the image fill the container width */
+      height: auto;
+    }
+
+    .headline-box div {
+      overflow: hidden; /* Hide overflow to contain the headline text */
+    }
+
+    /* Scrollable container */
+    #headlines-list {
+      max-height: 500px; /* Set maximum height for scrollable area */
+      overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+    /* Navbar styles */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    .brand {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .home-link {
+      padding: 8px 12px;
+      background-color: #0066cc;
+      border-radius: 5px;
+      text-decoration: none;
+      color: white;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .home-link:hover {
+      background-color: #0052a3;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand" id="topHeadlinesLink" style="color: blue;">GEOnews</div>
+    <a href="#topHeadlines" class="home-link">Home</a>
+    <div class="search-container">
+      <form id="cityForm">
+        <label for="cityInput" style="color: #fff;">Enter City:</label>
+        <input type="text" id="cityInput" name="cityInput" required />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+  <h1 id="topHeadlines">Top Headlines</h1>
+  <div id="headlines-list"></div>
+  <script>
+    const apiKey = 'ee1097ca01fc4e31a88a3bbd7ab106e3';
+    const headlinesList = document.getElementById('headlines-list');
+
+    function openArticle(url) {
+      window.open(url, '_blank');
+    }
+
+    function createHeadlineBox(article) {
+      const headlineBox = document.createElement('div');
+      headlineBox.classList.add('headline-box');
+      headlineBox.onclick = function() {
+        openArticle(article.url); // Redirects to the article URL when clicked
+      };
+
+      const imageElement = document.createElement('img');
+      imageElement.src = article.urlToImage || 'https://via.placeholder.com/150'; // Use placeholder image if URL not available
+      imageElement.alt = article.title;
+
+      const titleElement = document.createElement('div');
+      titleElement.textContent = article.title;
+
+      headlineBox.appendChild(imageElement);
+      headlineBox.appendChild(titleElement);
+
+      return headlineBox;
+    }
+
+    function displayHeadlines(articles) {
+      headlinesList.innerHTML = ''; // Clear previous results
+      articles.forEach(article => {
+        const headlineBox = createHeadlineBox(article);
+        headlinesList.appendChild(headlineBox);
+      });
+    }
+
+    function fetchAndDisplayNewsByCity(city) {
+      fetch(
+        "https://newsapi.org/v2/everything?q=" +
+          city +
+          "&apiKey=ee1097ca01fc4e31a88a3bbd7ab106e3"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          headlinesList.innerHTML = ''; // Clear previous results
+          if (data.articles && data.articles.length > 0) {
+            displayHeadlines(data.articles.slice(0, 15)); // Display maximum of 15 articles
+          } else {
+            headlinesList.innerHTML = "<p>No news found for this city.</p>";
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching news:", error);
+          headlinesList.innerHTML = "<p>Error fetching news. Please try again later.</p>";
+        });
+    }
+
+    document.getElementById("cityForm").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent the form from submitting in the traditional way
+
+      var city = document.getElementById("cityInput").value;
+
+      fetchAndDisplayNewsByCity(city);
+    });
+
+    function scrollToHeadlines() {
+      document.getElementById('topHeadlines').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Fetch top headlines from NewsAPI
+    fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`)
+      .then(response => response.json())
+      .then(data => {
+        displayHeadlines(data.articles.slice(0, 15)); // Display maximum of 15 articles
+      })
+      .catch(error => {
+        console.log('Error fetching headlines:', error);
+        headlinesList.textContent = 'Failed to fetch headlines. Please try again later.';
+      });
+  </script>
+</body>
+</html>

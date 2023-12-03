@@ -1,0 +1,12 @@
+Hello, and welcome to the README file of my Harvard CS50x task 10 final project. 
+In my README file, i will explain the reasons why i have made this site,and how it can be beneficial to those who use it.
+Firstly, I wanted to clarify why i made this website.
+I have chosen to create a news article based site that allows people to view the top headlines across the world every day.
+This project has been a very difficult challenge but I believe that it will help me develop new skills and opportunities.
+My main goal is to help others have easier and more effective lives.
+The website is by building the structure of a website using HTML, CSS and Javascript in the visual studio application.
+I have been also saving all progress and updates in my github repository.
+I built the website base from sourcing code from a website called bootstrap and integrating some of their code into my project.
+I then proceeded to build the Nav bar using CSS to ensure it fitted the top part of the screen. After this I incorporated the search function to fit within the nav bar of the website. 
+Once the search function was added I then proceeded to add the data using an API key to give it the functionality to search locations.  
+After extensive research I decided to use an API key from the website NewsAPI’s.com.  
