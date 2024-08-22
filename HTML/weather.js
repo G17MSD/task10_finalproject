@@ -88,3 +88,4 @@ document.getElementById('cityForm').addEventListener('submit', function(event) {
 
 // Call the function to fetch and display top headlines on page load
 fetchTopHeadlines();
+fetchTopHeadlines();
