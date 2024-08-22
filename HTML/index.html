@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GEOnews</title>
+  <title>GeoNews</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     /* Tooltip CSS */
@@ -89,17 +89,17 @@
 </head>
 <body>
   <nav>
-    <div class="brand" id="topHeadlinesLink" style="color: blue;">GEOnews</div>
-    <a href="#topHeadlines" class="home-link">Home</a>
+    <div class="brand" id="topHeadlinesLink" style="color: blue;">GeoNews</div>
+    <a href="#" class="home-link" id="homeButton">Home</a>
     <div class="search-container">
       <form id="cityForm">
-        <label for="cityInput" style="color: #fff;">Enter City:</label>
+        <label for="cityInput" style="color: #fff;">Enter news topic:</label>
         <input type="text" id="cityInput" name="cityInput" required />
         <button type="submit">Search</button>
       </form>
     </div>
   </nav>
-  <h1 id="topHeadlines">Top Headlines</h1>
+  <h1 id="topHeadlines">Top Headlines based off of search</h1>
   <div id="headlines-list"></div>
   <script>
     const apiKey = 'ee1097ca01fc4e31a88a3bbd7ab106e3';
@@ -138,18 +138,21 @@
     }
 
     function fetchAndDisplayNewsByCity(city) {
-      fetch(
-        "https://newsapi.org/v2/everything?q=" +
-          city +
-          "&apiKey=ee1097ca01fc4e31a88a3bbd7ab106e3"
-      )
-        .then((response) => response.json())
-        .then((data) => {
+      // Add the term "news" to the city for more relevant search
+      const searchQuery = encodeURIComponent(`${city} news`);
+      const url = `https://newsapi.org/v2/everything?q=${searchQuery}&apiKey=${apiKey}`;
+      
+      // Fetch articles related to the search
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.articles); // Log the articles to verify the data
           headlinesList.innerHTML = ''; // Clear previous results
+
           if (data.articles && data.articles.length > 0) {
             displayHeadlines(data.articles.slice(0, 15)); // Display maximum of 15 articles
           } else {
-            headlinesList.innerHTML = "<p>No news found for this city.</p>";
+            headlinesList.innerHTML = "<p>No news found for this topic.</p>";
           }
         })
         .catch((error) => {
@@ -162,15 +165,10 @@
       event.preventDefault(); // Prevent the form from submitting in the traditional way
 
       var city = document.getElementById("cityInput").value;
-
-      fetchAndDisplayNewsByCity(city);
+      fetchAndDisplayNewsByCity(city); // Call the modified fetch function
     });
 
-    function scrollToHeadlines() {
-      document.getElementById('topHeadlines').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Fetch top headlines from NewsAPI
+    // Fetch top headlines from NewsAPI on initial load
     fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`)
       .then(response => response.json())
       .then(data => {
@@ -180,6 +178,13 @@
         console.log('Error fetching headlines:', error);
         headlinesList.textContent = 'Failed to fetch headlines. Please try again later.';
       });
+
+    // Handle 'Home' button click
+    document.getElementById("homeButton").addEventListener("click", function (event) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll smoothly to the top
+    });
   </script>
 </body>
 </html>
+
