@@ -1,5 +1,5 @@
 // Replace 'YOUR_API_KEY' with your actual NewsAPI key
-const apiKey = 'ee1097ca01fc4e31a88a3bbd7ab106e3';
+const apiKey = 'API_KEY HERE!';
 const articlesContainer = document.getElementById('newsResults');
 const headlinesList = document.getElementById('headlines-list');
 
